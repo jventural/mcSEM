@@ -133,14 +133,16 @@
   # Combine panels
   main_title <- sprintf("Monte Carlo Sample Size Analysis for CFA\nRECOMMENDED SAMPLE SIZE: %d PARTICIPANTS", n_recommended)
 
-  p_final <- (p1 | p2) / (p3 | p4) +
+  p_combined <- (p1 | p2) / (p3 | p4)
+
+  p_final <- p_combined +
     patchwork::plot_annotation(
       title = main_title,
-      subtitle = subtitle_extra
-    ) &
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(face = "bold", size = 14, color = "red", hjust = 0.5),
-      plot.subtitle = ggplot2::element_text(size = 11, color = "gray40", hjust = 0.5)
+      subtitle = subtitle_extra,
+      theme = ggplot2::theme(
+        plot.title = ggplot2::element_text(face = "bold", size = 14, color = "red", hjust = 0.5),
+        plot.subtitle = ggplot2::element_text(size = 11, color = "gray40", hjust = 0.5)
+      )
     )
 
   p_final
