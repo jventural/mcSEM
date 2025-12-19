@@ -8,14 +8,16 @@
 
 ## Monte Carlo Sample Size Estimation for Structural Equation Models
 
-**mcSEM** es un paquete de R que utiliza simulación Monte Carlo para estimar el tamaño de muestra óptimo en Análisis Factorial Confirmatorio (CFA). El paquete evalúa la potencia estadística basándose en múltiples índices de ajuste (CFI, RMSEA, SRMR) y proporciona recomendaciones robustas para estudios psicométricos.
+**mcSEM** es un paquete de R que utiliza simulación Monte Carlo para estimar el tamaño de muestra óptimo en Análisis Factorial Confirmatorio (CFA) y Análisis Factorial Exploratorio (EFA). El paquete evalúa la potencia estadística basándose en múltiples índices de ajuste (CFI, RMSEA, SRMR) y proporciona recomendaciones robustas para estudios psicométricos.
 
 ## Características principales
 
+- ✅ **Soporte para CFA y EFA**: Estimación de tamaño de muestra para ambos tipos de análisis factorial
 - ✅ **Análisis A Priori**: Estima el tamaño de muestra sin necesidad de datos previos
 - ✅ **Análisis A Posteriori**: Utiliza datos existentes para simulaciones más precisas
 - ✅ **Múltiples índices de ajuste**: CFI, RMSEA, SRMR evaluados simultáneamente
 - ✅ **Soporte para datos ordinales**: Estimador WLSMV y correlaciones policóricas
+- ✅ **Rotaciones EFA**: Soporte para oblimin, varimax, promax y otras rotaciones
 - ✅ **Misespecificación realista**: Simula condiciones reales con cross-loadings y correlaciones residuales
 - ✅ **Visualización automática**: Gráficos de 4 paneles listos para publicación
 - ✅ **Procesamiento paralelo**: Acelera las simulaciones usando múltiples núcleos
@@ -29,14 +31,25 @@ devtools::install_github("jventural/mcSEM")
 
 ## Funciones principales
 
+### CFA (Análisis Factorial Confirmatorio)
+
 | Función | Descripción |
 |---------|-------------|
 | `mc_cfa_apriori()` | Estimación de tamaño de muestra **sin datos** (modelo teórico) |
 | `mc_cfa()` | Estimación de tamaño de muestra **con datos** existentes |
 
+### EFA (Análisis Factorial Exploratorio)
+
+| Función | Descripción |
+|---------|-------------|
+| `mc_efa_apriori()` | Estimación de tamaño de muestra **sin datos** (modelo teórico) |
+| `mc_efa()` | Estimación de tamaño de muestra **con datos** existentes |
+
 ---
 
-## Tutorial: Análisis A Priori
+# CFA: Análisis Factorial Confirmatorio
+
+## Tutorial: Análisis A Priori (CFA)
 
 El análisis **a priori** es útil cuando estás planificando un estudio y necesitas determinar cuántos participantes reclutar. Solo necesitas especificar las características teóricas de tu modelo.
 
@@ -193,7 +206,7 @@ El gráfico incluye:
 
 ---
 
-## Tutorial: Análisis A Posteriori
+## Tutorial: Análisis A Posteriori (CFA)
 
 El análisis **a posteriori** utiliza datos existentes (por ejemplo, de un estudio piloto) para estimar el tamaño de muestra óptimo. Esto proporciona estimaciones más precisas basadas en la estructura real de los datos.
 
@@ -228,6 +241,183 @@ ggsave("mi_analisis.png", resultado$plot, width = 12, height = 9)
 
 ---
 
+# EFA: Análisis Factorial Exploratorio
+
+## Tutorial: Análisis A Priori (EFA)
+
+El análisis **a priori** para EFA permite estimar el tamaño de muestra necesario cuando planificas un estudio exploratorio. Especificas el número de factores esperados, ítems y características del modelo.
+
+### Ejemplo básico
+
+```r
+library(mcSEM)
+
+# Escenario: Escala con 4 factores, 5 ítems por factor, escala Likert de 5 puntos
+resultado <- mc_efa_apriori(
+  n_factors = 4,
+  n_items = 20,
+  items_per_factor = 5,
+  loadings = 0.70,
+  n_categories = 5,
+  cross_loadings = 0.10,
+  rotation = "oblimin",
+  reps = 500
+)
+```
+
+### Salida en consola
+
+```
+================================================================
+   MONTE CARLO SAMPLE SIZE ANALYSIS FOR EFA (A PRIORI)
+================================================================
+
+=== THEORETICAL MODEL ===
+
+  Factors: 4
+  Items per factor: 5, 5, 5, 5
+  Total items: 20
+  Factor loadings: 0.70 (average)
+  Factor correlations: 0.30 (average)
+  Cross-loadings: 0.10
+  Response categories: 5
+  Estimator: WLSMV
+  Rotation: oblimin
+
+=== FIT CRITERIA ===
+
+  Criterion: moderate
+  CFI >= 0.95
+  RMSEA <= 0.060
+  SRMR <= 0.080
+  Power target: 80%
+
+=== SIMULATION SETTINGS ===
+
+  Replications: 500 per sample size
+  Sample sizes: 100 to 600
+
+================================================================
+   RUNNING MONTE CARLO SIMULATION
+================================================================
+
+  N = 100 | Conv:  92% | CFI: 0.985 [ 88%] | RMSEA: 0.038 [ 92%] | SRMR: 0.045 [ 98%]
+  N = 150 | Conv:  97% | CFI: 0.992 [ 96%] | RMSEA: 0.030 [ 98%] | SRMR: 0.036 [100%]
+  N = 200 | Conv:  99% | CFI: 0.995 [ 99%] | RMSEA: 0.025 [ 99%] | SRMR: 0.031 [100%]
+  ...
+
+================================================================
+   RECOMMENDATION
+================================================================
+
+  Minimum N for convergence (>= 95%): 150
+  Minimum N for CFI >= 0.95 (80% power): 100
+  Minimum N for RMSEA <= 0.060 (80% power): 100
+  Minimum N for SRMR <= 0.080 (80% power): 100
+
+  >>> RECOMMENDED SAMPLE SIZE: 150 PARTICIPANTS <<<
+```
+
+### Ver resultados con print()
+
+```r
+print(resultado)
+```
+
+```
+================================================================
+           mcSEM: Monte Carlo Sample Size Analysis
+================================================================
+
+Analysis: EFA
+Type: A Priori (theoretical model)
+Model: 4 factors, 20 items
+Cross-loadings: 0.10
+Estimator: WLSMV
+Rotation: oblimin
+Replications: 500
+
+Fit Criteria:
+  CFI >= 0.95
+  RMSEA <= 0.060
+  SRMR <= 0.080
+  Power target: 80%
+
+Minimum N for 80% Power:
+  Convergence: 150
+  CFI: 100
+  RMSEA: 100
+  SRMR: 100
+
+================================================================
+  RECOMMENDED SAMPLE SIZE: 150 PARTICIPANTS
+================================================================
+
+Use result$results for detailed table
+Use result$plot for visualization
+Use ggsave('filename.png', result$plot) to save plot
+```
+
+### Guardar visualización
+
+```r
+# Guardar gráfico de 4 paneles
+ggsave("efa_sample_size.png", resultado$plot, width = 12, height = 9, dpi = 300)
+```
+
+---
+
+## Tutorial: Análisis A Posteriori (EFA)
+
+El análisis **a posteriori** para EFA utiliza datos existentes para estimar el tamaño de muestra basándose en la estructura de correlaciones observada.
+
+### Ejemplo con datos
+
+```r
+library(mcSEM)
+
+# Ejecutar análisis EFA con 3 factores
+resultado <- mc_efa(
+  data = mis_datos,
+  n_factors = 3,
+  items = paste0("item", 1:15),
+  n_range = seq(100, 400, by = 50),
+  reps = 500,
+  cor_type = "polychoric",
+  estimator = "WLSMV",
+  rotation = "oblimin"
+)
+
+# Ver recomendación
+print(resultado)
+
+# Guardar gráfico
+ggsave("efa_analysis.png", resultado$plot, width = 12, height = 9)
+```
+
+---
+
+## Aplicación de las funciones EFA
+
+```r
+# Ejemplo 1: EFA con 3 factores y rotación oblimin
+mc_efa_apriori(n_factors = 3, n_items = 15, loadings = 0.70, rotation = "oblimin")
+
+# Ejemplo 2: EFA con diferente número de ítems por factor
+mc_efa_apriori(n_factors = 4, n_items = 18, items_per_factor = c(5, 5, 4, 4), loadings = 0.65)
+
+# Ejemplo 3: EFA con rotación varimax (ortogonal)
+mc_efa_apriori(n_factors = 3, n_items = 12, rotation = "varimax", factor_cors = 0)
+
+# Ejemplo 4: EFA con datos continuos
+mc_efa_apriori(n_factors = 2, n_items = 10, n_categories = NULL, estimator = "ML")
+
+# Ejemplo 5: Criterio estricto
+mc_efa_apriori(n_factors = 4, n_items = 20, criterion = "strict", reps = 1000)
+```
+
+---
+
 ## Parámetros importantes
 
 ### Niveles de misespecificación
@@ -246,6 +436,15 @@ ggsave("mi_analisis.png", resultado$plot, width = 12, height = 9)
 | `"strict"` | ≥ 0.95 | ≤ 0.05 | ≤ 0.06 | Publicaciones de alto impacto |
 | `"moderate"` | ≥ 0.95 | ≤ 0.06 | ≤ 0.08 | **Recomendado** - Estándar común |
 | `"flexible"` | ≥ 0.90 | ≤ 0.08 | ≤ 0.10 | Estudios exploratorios |
+
+### Tipos de rotación (EFA)
+
+| Rotación | Tipo | Descripción |
+|----------|------|-------------|
+| `"oblimin"` | Oblicua | **Recomendado** - Permite correlación entre factores |
+| `"promax"` | Oblicua | Similar a oblimin, computacionalmente eficiente |
+| `"varimax"` | Ortogonal | Factores no correlacionados |
+| `"quartimax"` | Ortogonal | Minimiza complejidad de variables |
 
 ---
 
