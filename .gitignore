@@ -1,0 +1,33 @@
+# R package specific
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Package build files
+src/*.o
+src/*.so
+src/*.dll
+
+# Compiled files
+*.rds
+*.Rproj.user
+
+# Documentation artifacts
+/doc/
+Meta/
+
+# Temporary files
+*~
+\#*\#
+.\#*
+*.swp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.tar.gz
+*.zip

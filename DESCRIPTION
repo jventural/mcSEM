@@ -1,0 +1,36 @@
+Package: mcSEM
+Type: Package
+Title: Monte Carlo Sample Size Estimation for Structural Equation Models
+Version: 0.1.0
+Authors@R: person("Your Name", "Your Last Name",
+                  email = "your.email@example.com",
+                  role = c("aut", "cre"),
+                  comment = c(ORCID = "0000-0000-0000-0000"))
+Description: Monte Carlo simulation-based sample size estimation for
+    Confirmatory Factor Analysis (CFA), Exploratory Factor Analysis (EFA),
+    and Structural Equation Models (SEM). Supports both a priori (before
+    data collection) and a posteriori (with existing data) analyses.
+    Handles ordinal/Likert data with WLSMV estimator and polychoric
+    correlations. Evaluates power based on CFI, RMSEA, and SRMR fit indices.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.0
+Depends:
+    R (>= 4.0.0)
+Imports:
+    lavaan (>= 0.6-12),
+    MASS,
+    ggplot2 (>= 3.4.0),
+    patchwork,
+    parallel,
+    pbapply,
+    psych,
+    stats
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+URL: https://github.com/yourusername/mcSEM
+BugReports: https://github.com/yourusername/mcSEM/issues
