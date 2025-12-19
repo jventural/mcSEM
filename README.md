@@ -365,6 +365,8 @@ Use ggsave('filename.png', result$plot) to save plot
 ggsave("efa_sample_size.png", resultado$plot, width = 12, height = 9, dpi = 300)
 ```
 
+![Ejemplo de visualización EFA](man/figures/example_plot_efa.png)
+
 ---
 
 ## Tutorial: Análisis A Posteriori (EFA)
