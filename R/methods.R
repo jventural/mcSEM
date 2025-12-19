@@ -11,20 +11,35 @@ print.mcSEM <- function(x, ...) {
   cat("           mcSEM: Monte Carlo Sample Size Analysis\n")
   cat("================================================================\n\n")
 
-  # Type of analysis
-  if (x$config$type == "a_priori") {
+  # Determine analysis type (CFA or EFA)
+  analysis_type <- ifelse(!is.null(x$config$analysis), x$config$analysis, "CFA")
+  cat(sprintf("Analysis: %s\n", analysis_type))
+
+  # Type of analysis (a priori vs a posteriori)
+  if (x$config$type %in% c("a_priori", "efa_a_priori")) {
     cat("Type: A Priori (theoretical model)\n")
     cat(sprintf("Model: %d factors, %d items\n",
                 x$model$n_factors, x$model$n_items))
-    cat(sprintf("Misspecification: %s\n", x$config$misspecification))
+    if (!is.null(x$config$misspecification)) {
+      cat(sprintf("Misspecification: %s\n", x$config$misspecification))
+    }
+    if (!is.null(x$config$cross_loadings)) {
+      cat(sprintf("Cross-loadings: %.2f\n", x$config$cross_loadings))
+    }
   } else {
     cat("Type: A Posteriori (with data)\n")
     cat(sprintf("Items: %d\n", x$config$n_items))
     cat(sprintf("Original N: %d\n", x$config$n_obs_original))
     cat(sprintf("Correlation: %s\n", x$config$cor_type))
+    if (!is.null(x$config$n_factors)) {
+      cat(sprintf("Factors: %d\n", x$config$n_factors))
+    }
   }
 
   cat(sprintf("Estimator: %s\n", x$config$estimator))
+  if (!is.null(x$config$rotation)) {
+    cat(sprintf("Rotation: %s\n", x$config$rotation))
+  }
   cat(sprintf("Replications: %d\n", x$config$reps))
   cat("\n")
 
